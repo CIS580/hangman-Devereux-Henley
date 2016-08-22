@@ -2,6 +2,7 @@ var stickman = document.getElementById('scaffold');
 var wordDiv = document.getElementById('word');
 var lettersDiv = document.getElementById('letters');
 var guessesDiv = document.getElementById('guesses');
+var badGuesses = 0;
 var secretWord = "";
 var blanks = "";
 
@@ -9,11 +10,11 @@ var blanks = "";
  * Initializes a new game.
  */
 function init() {  
-  clearGuesses();
-  resetLetters();
-  drawStickMan(0);
-  chooseSecretWord();
-  drawBlanks();
+	clearGuesses();
+	resetLetters();
+	drawStickMan(0);
+	chooseSecretWord();
+	drawBlanks();
 };
 init();
 
@@ -21,7 +22,8 @@ init();
  * Clear the guesses div of all prior guesses
  */
 function clearGuesses() {
-  guessesDiv.innerHTML = "";
+	guessesDiv.innerHTML = "";
+	badGuesses = 0;
 }
 
 /**
@@ -29,12 +31,12 @@ function clearGuesses() {
  * in the alphabet
  */
 function resetLetters() {
-  var letters = [];
-  for(i=0; i<26; i++) {
-    var letter = String.fromCharCode(65 + i); 
-    letters.push('<a id="' + letter + '" onclick=guessLetter(' + letter + ') href="#' + letter + '">' + letter + '</a>');    
-  }
-  lettersDiv.innerHTML = letters.join('');
+	var letters = [];
+	for(i=0; i<26; i++) {
+		var letter = String.fromCharCode(65 + i); 
+		letters.push('<a id="' + letter + '" onclick=guessLetter(' + letter + ') href="#' + letter + '">' + letter + '</a>');    
+	}
+	lettersDiv.innerHTML = letters.join('');
 }
 
 /**
@@ -44,23 +46,53 @@ function resetLetters() {
  * @param {elm} the element clicked
  */
 function guessLetter(elm) {
-  var letter = elm.id;
+	var letter = elm.id;
 
-  // Remove the letter from possible guesses element
-  var node = document.getElementById(letter);
-  node.parentElement.removeChild(node);
+	// Remove the letter from possible guesses element
+	var node = document.getElementById(letter);
+	node.parentElement.removeChild(node);
 
-  // Add the letter to the guesses div
-  node = document.createElement('span');
-  node.innerHTML = letter;
-  guessesDiv.appendChild(node);
+	// Add the letter to the guesses div
+	node = document.createElement('span');
+	node.innerHTML = letter;
+	guessesDiv.appendChild(node);
 
-  // TODO: Determine if the letter is in the secret word,
-  // if so, reveal it in the secretWordDiv, otherwise
-  // add a part to our hangman
+	// TODO: Determine if the letter is in the secret word,
+	// if so, reveal it in the secretWordDiv, otherwise
+	// add a part to our hangman
+	var lower_letter = letter.toLowerCase();
+	var blanksArr = blanks.split("");
 
-  // TODO: Determine if the game is over, and if so,
-  // let the player know if they have won or lost
+	if(secretWord.includes(lower_letter)) {
+		for(i=0; i < secretWord.length; i++){
+			if(secretWord[i] == lower_letter){
+				blanksArr[i] = lower_letter;
+				secretWord[i] = "_";
+			}
+		}
+		blanks = blanksArr.join("");
+		drawBlanks();
+	}
+	else {
+		badGuesses++;
+		drawStickMan(badGuesses);
+	}
+	
+	wordsArr = [].slice.call(wordDiv.children);
+	words = wordsArr.map(function(inner_val) {
+		return inner_val.innerHTML;
+	}).join("");
+
+	// TODO: Determine if the game is over, and if so,
+	// let the player know if they have won or lost
+	if(secretWord == words){
+		alert("You win nerd");
+		init();
+	}
+	else if(badGuesses>6){
+		alert("Game over nerds");
+		init();	
+	}	
 }
 
 /**
@@ -68,12 +100,12 @@ function guessLetter(elm) {
  * @param {wrongGuesses} the number of wrong guesses
  */
 function drawStickMan(wrongGuesses) {
-  if(wrongGuesses == 0) {
-    scaffold.src = "scaffold.png";
-  }
-  else {
-    scaffold.src = "stickman" + wrongGuesses + ".png";
-  }
+	if(wrongGuesses == 0) {
+		scaffold.src = "scaffold.png";
+	}
+	else {
+		scaffold.src = "stickman" + wrongGuesses + ".png";
+	}
 }
 
 /**
@@ -81,12 +113,12 @@ function drawStickMan(wrongGuesses) {
  * and set blanks to match the number of letters.
  */
 function chooseSecretWord() {
-  var index = Math.floor(Math.random() * dictionary.length);
-  secretWord = dictionary[index].word; 
-  blanks = '';
-  for(i = 0; i < secretWord.length; i++) {
-    blanks += '_';
-  } 
+	var index = Math.floor(Math.random() * dictionary.length);
+	secretWord = dictionary[index].word; 
+	blanks = '';
+	for(i = 0; i < secretWord.length; i++) {
+		blanks += '_';
+	} 
 }
 
 /**
@@ -94,9 +126,9 @@ function chooseSecretWord() {
  * the wordDiv
  */
 function drawBlanks(){
-  var html = [];
-  for(i=0; i < blanks.length; i++) {
-    html.push('<span>' + blanks.charAt(i) + '</span>');
-  }
-  wordDiv.innerHTML = html.join('');
+	var html = [];
+	for(i=0; i < blanks.length; i++) {
+		html.push('<span>' + blanks.charAt(i) + '</span>');
+	}
+	wordDiv.innerHTML = html.join('');
 }
