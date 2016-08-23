@@ -85,11 +85,11 @@ function guessLetter(elm) {
 	// TODO: Determine if the game is over, and if so,
 	// let the player know if they have won or lost
 	if(secretWord == words){
-		alert("You win nerd, the word was " + secretWord);
+		alert("You win, the word was " + secretWord);
 		init();
 	}
 	else if(badGuesses>6){
-		alert("Game over nerds, the word was " + secretWord);
+		alert("Game over, the word was " + secretWord);
 		init();	
 	}	
 }
