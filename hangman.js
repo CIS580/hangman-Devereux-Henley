@@ -74,8 +74,7 @@ function guessLetter(elm) {
 		drawBlanks();
 	}
 	else {
-		badGuesses++;
-		drawStickMan(badGuesses);
+		drawStickMan(++badGuesses);
 	}
 	
 	wordsArr = [].slice.call(wordDiv.children);
