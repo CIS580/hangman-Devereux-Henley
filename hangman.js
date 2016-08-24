@@ -60,23 +60,24 @@ function guessLetter(elm) {
 	// TODO: Determine if the letter is in the secret word,
 	// if so, reveal it in the secretWordDiv, otherwise
 	// add a part to our hangman
-	var lower_letter = letter.toLowerCase();
-	var blanksArr = blanks.split("");
+	var lower_letter = letter.toLowerCase();	
 
 	if(secretWord.includes(lower_letter)) {
-		for(i=0; i < secretWord.length; i++){
-			if(secretWord[i] == lower_letter){
-				blanksArr[i] = lower_letter;
-				secretWord[i] = "_";
+		var blanksArr = blanks.split("");
+
+		blanks = blanksArr.map(function(val, idx) {
+			if(secretWord[idx] == lower_letter){
+				return lower_letter;
 			}
-		}
-		blanks = blanksArr.join("");
+			return val;
+		}).join("");
+
 		drawBlanks();
 	}
 	else {
 		drawStickMan(++badGuesses);
 	}
-	
+
 	wordsArr = [].slice.call(wordDiv.children);
 	words = wordsArr.map(function(inner_val) {
 		return inner_val.innerHTML;
